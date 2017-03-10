@@ -10,7 +10,7 @@ import UIKit
 
 class CalculateViewController: UIViewController, UITextFieldDelegate {
     
-    //MARK: === VARIABLES & CONSTANTES ===
+    //MARK: - VARIABLES & CONSTANTES
     @IBOutlet weak var currencySegmentedControl: UISegmentedControl!
     @IBOutlet weak var checkAmountLabel: UILabel!
     @IBOutlet weak var checkAmountTextField: UITextField!
@@ -29,8 +29,19 @@ class CalculateViewController: UIViewController, UITextFieldDelegate {
     // Appel du cerveau des opérations
     var brain = CalculatorModel()
     
+    //MARK: - FONCTIONS LIEES A LA VUE
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.navigationBar.isHidden = false
+        self.navigationController?.navigationBar.barTintColor = UIColor.white
+        self.checkAmountTextField.text = "0.00€"
+        self.checkAmountLabel.text = "Montant"
+    }
     
-    //MARK: === AUTRES FONCTIONS ===
+    //MARK: - AUTRES FONCTIONS
     
     @IBAction func serviceButtonTapped(_ sender: UIButton) {
         //print( "button tapped N° \(sender.tag)" )
@@ -39,7 +50,6 @@ class CalculateViewController: UIViewController, UITextFieldDelegate {
         brain.serviceLevel = sender.tag
         serviceLabel.text = serviceLabelText[brain.serviceLevel]
         tipLabel.text = brain.tipLabel[brain.serviceLevel]
-        
         
 //        switch brain.serviceLevel {
 //        case 0:
@@ -71,14 +81,19 @@ class CalculateViewController: UIViewController, UITextFieldDelegate {
         self.secondStar.setImage(brain.serviceLevel >= 1 ? imagePleine : imageCreuse, for: .normal)
         self.thirdStar.setImage(brain.serviceLevel >= 2 ? imagePleine : imageCreuse, for: .normal)
         
+        // Formattage de l'affichage en fonction de la conversion demandée
         if let amount = checkAmountTextField.text, let formattedAmount = stringToDouble(amount) {
             brain.checkAmount = formattedAmount
-            self.amountLabel.text = " \(String(brain.computedTip)) €"
-            convertedAmountLabel.text = "\(String(brain.computedTip * brain.conversionRate))"
-            updateCurrencyConversion()
             
+            if self.currencySegmentedControl.selectedSegmentIndex == 0 {
+                self.amountLabel.text = "\(String(brain.computedTip))€"
+            } else {
+                self.amountLabel.text = "$\(String(brain.computedTip))"
+            }
+            
+            self.convertedAmountLabel.text = "\(String(brain.computedTip * brain.conversionRate))"
+            updateCurrencyConversion()
         }
-        
     }
     
     // Choix de la conversion à effectuer
@@ -100,31 +115,26 @@ class CalculateViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    // Mise à jour de la conversion
-    func updateCurrencyConversion() {
-        if self.currencySegmentedControl.selectedSegmentIndex == 0 {
-            convertedAmountLabel.text = ( ("$ ") + ( brain.computedTip / brain.conversionRate ).toFormattedString! )
-            
-        } else {
-            convertedAmountLabel.text = ( ( brain.computedTip * brain.conversionRate ).toFormattedString! + " €" )
-        }
-        
+    // Transition vers l'about
+    @IBAction func about3waSchoolPressed(_ sender: UIButton) {
+        performSegue(withIdentifier: "showAboutSegue", sender: self)
     }
     
-    // Disparition du clavier
+    // Mise à jour de la conversion
+    // * Selon l'index de la segmentedControl
+    func updateCurrencyConversion() {
+        if self.currencySegmentedControl.selectedSegmentIndex == 0 {
+            self.convertedAmountLabel.text = ( ("($") + ( brain.computedTip / brain.conversionRate ).toFormattedString! + ")" )
+            
+        } else {
+            self.convertedAmountLabel.text = ( "(" + ( brain.computedTip * brain.conversionRate ).toFormattedString! + "€)" )
+        }        
+    }
+    
+    // Disparition du clavier lorsque l'on clique à côté (sur la vue)
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
     }
     
-    //MARK: === FONCTIONS LIEES A LA VUE ===
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-    }
-    override func viewWillAppear(_ animated: Bool) {
-        self.navigationController?.navigationBar.isHidden = false
-        self.navigationController?.navigationBar.barTintColor = UIColor.white
-        self.checkAmountTextField.text = "0.00€"
-        self.checkAmountLabel.text = "Montant"
-    }
+    
 }

@@ -10,7 +10,7 @@ import Foundation
 
 struct CalculatorModel {
     
-    //MARK: === VARIABLES & CONSTANTES ===
+    //MARK: - VARIABLES & CONSTANTES
 
     var checkAmount = 0.0
     var serviceLevel = 1

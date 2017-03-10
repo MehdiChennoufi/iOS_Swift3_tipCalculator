@@ -60,8 +60,8 @@
 		DC3270631E68592C0075FA6C /* tipCalculator */ = {
 			isa = PBXGroup;
 			children = (
-				DCCCA0CD1E6D63AF008EA174 /* Controllers */,
 				DCCCA0CE1E6D63BD008EA174 /* Views */,
+				DCCCA0CD1E6D63AF008EA174 /* Controllers */,
 				DCCCA0CC1E6D63A0008EA174 /* Services */,
 				DCCCA0D11E6D88E2008EA174 /* Models */,
 			);
